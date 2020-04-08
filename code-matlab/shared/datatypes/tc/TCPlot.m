@@ -77,11 +77,11 @@ x_end = size(tc_temp,2);
 clear tch;
 for iC = 1:size(tc_temp,1)      
     
-    subaxis(size(tc_temp,1),1,iC,'SpacingVert',0);
+    subaxis(size(tc_temp,1),1,iC,'SpacingVert',0,'PaddingRight',0.5);
     
     switch cfg.mode
         case 'area'
-            tch(iC) = area(tc_temp(iC,:)); set(tch(iC),'FaceColor',cfg.color,'EdgeColor',[1 1 1]); 
+            tch(iC) = area(tc_temp(iC,:)); set(tch(iC),'FaceColor',cfg.color,'EdgeColor',[0 0 0]); 
             if cfg.alpha > 0 % attempt at transparency doesn't work
                 patchobjs = findobj(get(tch(iC),'children'), '-property', 'AlphaData');
                 set(patchobjs, 'AlphaData', cfg.alpha);
@@ -100,7 +100,7 @@ for iC = 1:size(tc_temp,1)
     yl = ylabel(cellNum(iC)); 
     set(yl,'Rotation',0,'Fontsize',8);
     %if iC == 1; title(ENC_data(iT).trial_type); end
-    %axis off;
+    axis off;
 end
 
 set(gca,'XTick',[1 cfg.cp x_end],'XTicklabel',[1 cfg.cp*cfg.binsize x_end*cfg.binsize],'Ticklength', [0 0],'Fontsize',8,'YTickLabel',cellNum);
