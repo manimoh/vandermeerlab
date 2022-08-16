@@ -37,6 +37,7 @@ Do_AutoClust = 'yes'; % Stop after initial processing (creation of FDs for BBClu
 prevRunMat = [];
 StartAtStep = 0;
 ForceRun = false; % ADR 25 Feb 2008
+KK_order = 'forward'; % 'reverse', MvdM 2022
 % NormalizeFDYN = 'no';
 % record_block_size = 40000;
 % template_matching = 0;
@@ -369,7 +370,7 @@ if strcmp(Do_AutoClust,'yes')
        end
    end
    if strcmpi('KlustaKwik',gPar.ClusterAlgorithm)
-       KlustaKwikPath = which('KlustaKwik.out');
+       KlustaKwikPath = which('KlustaKwik.exe');
        if ~isempty(KlustaKwikPath)
            disp(['KlustaKwikPath undefined, using ' KlustaKwikPath]);
        else
@@ -388,8 +389,15 @@ if strcmp(Do_AutoClust,'yes')
 	   load FinishedFiles.mat
    end
    popdir;
-	   
-   for i = 1:nFiles
+	
+   switch KK_order
+       case 'forward'
+           ord = 1:nFiles;
+       case 'reverse'
+           ord = nFiles:-1:1;
+   end
+   
+   for i = ord
 	   
        CurrTime = datestr(now);
        CurrHour = str2num(CurrTime(end-7:end-6));
@@ -423,7 +431,10 @@ if strcmp(Do_AutoClust,'yes')
            % changed i to jF in parameter_string below and added code to
            % match up file names to eliminate errors after subsampling.
            % JCJ Sept 2007
-           [SSFNp,SSFNn]=fileparts(gPar.SubsampledFileNames{i});
+           [SSFNp,SSFNn,SSFNe]=fileparts(gPar.SubsampledFileNames{i});
+           if strcmp(gPar.LoadingEngine, 'mClustTrodesLoadingEngine') % deal with multiple extensions - MvdM
+               SSFNn = cat(2,SSFNn,SSFNe);
+           end
            for iF=1:length(fPar)
                [OFNp,OFNn]=fileparts(fPar{iF}.FileName);
                if strncmpi(OFNn,SSFNn,length(OFNn)); 
