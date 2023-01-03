@@ -55,7 +55,7 @@ end
 
 if isempty(p)
     old_fn = filename;
-    filename = findfiles(filename);
+    filename = FindFiles(filename);
     if isempty(filename)
         disp([old_fn ' does not exist'])
         return

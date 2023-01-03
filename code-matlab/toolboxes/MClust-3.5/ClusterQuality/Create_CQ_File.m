@@ -40,7 +40,15 @@ if ~exist('fd_TT','var'); fd_TT = ' '; end
 % Assume this is hard coded (the feature space to use is always the same)
 FeaturesToUse = {'energy','wavePC1'};
 nRecords_SNR = 20000; % maximum number of records to load when calculating the signal-to-noise ratio
-				
+% manishm: This is problematic, when trying to get all wave
+% forms. In that case this should be increase to a very
+% high number
+if exist('allwaveforms', 'var')
+    if allwaveforms == 1
+        nRecords_SNR = nRecords_SNR*1000;
+    end
+end
+
 if isempty(fc); fc = FindFiles('*.t'); end
 
 fc_remove = {}; % any tetrode files that are copied from CD and need to be erased.
@@ -153,6 +161,14 @@ for iFC = 1:length(fc)
 			
 			if ~strcmpi(Name.Location,fd_Curr) || ~strcmpi(Name.Tetrode,TT_Curr) % if the tetrode to load is not the one currently in memory
 				nS = MClust_CountSpikes(fc_TT{1});  % find the total number of records
+                % manishm: This is problematic, when trying to get all wave
+                % forms. In that case this should be increase to a very
+                % high number
+                if exist('allwaveforms', 'var')
+                    if allwaveforms == 1
+                        record_block_size = record_block_size*1000;
+                    end
+                end
 				if nS < record_block_size  % if the number of records is smaller than our maximum, get all of the records
 					[T WVD] = MClust_LoadNeuralData(fc_TT{1});
 				else % if not, get all of the timestamps
